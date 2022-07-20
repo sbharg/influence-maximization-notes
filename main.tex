@@ -1,13 +1,13 @@
 \documentclass[11pt]{article}
 \usepackage{preamble}
+\usepackage{lipsum} 
+
+% If using biblatex, specify bib file here
 %\addbibresource{refs.bib}
-\bibliographystyle{plainnat}
 
 % Custom macros
 \newcommand{\imfull}{\textsf{Influence Maximization}}
 \newcommand{\im}{\textsf{IM}}
-\newcommand{\eas}{\textsf{EAS}}
-\newcommand{\irange}[2]{\ensuremath{\lrb{#1, #2}}}
 
 \title{Notes on Influence Maximization}
 \author{
@@ -24,13 +24,28 @@
 
     \end{abstract}
     \newpage
-
+ 
     \section{Introduction}
     test citation \cite{kempe2003maximizing, kempe2005influential}. \citet{kempe2003maximizing} asdf. 
+
+    \begin{theorem}
+        test theorem 
+        \label{thm:test}
+    \end{theorem}
+    \begin{proof}[of \cref{thm:test}]
+        test proof
+        \begin{equation}
+            asdf
+            \label{eq:test}
+        \end{equation}
+    \end{proof}
+
+    In \cref{thm:test} we show \(x\) and \(y\). As shown in \cref{eq:test}
+
     \newpage
     % Delete prev .bbl file if switching between biblatex and bibtex
 
-    %\printbibliography
-    \bibliography{refs}
+    %\printbibliography     % For biblatex
+    \bibliography{refs}     % For bibtex/natbib
  
 \end{document}
