@@ -1,51 +1,32 @@
 \documentclass[11pt]{article}
-\usepackage{preamble}
-\usepackage{lipsum} 
+\usepackage[biblatex]{preamble}
+\addbibresource{refs.bib}
 
-% If using biblatex, specify bib file here
-%\addbibresource{refs.bib}
+\newcommand{\infmax}{\hyperref[prob:infmax]{\textsf{InfMax}}}
+\newcommand{\infl}[1]{\ensuremath{\func{\sigma}{#1}}}
+\newcommand{\inneigh}[1]{\ensuremath{\func{\Gamma}{#1}}}
+\newcommand{\ltmodel}[1][LT]{\hyperref[def:linear_threshold]{#1}}
+\newcommand{\icmodel}[1][IC]{\hyperref[def:independent_cascade]{#1}}
+\newcommand{\realization}[1][realization]{\hyperref[def:realization]{#1}}
 
-% Custom macros
-\newcommand{\imfull}{\textsf{Influence Maximization}}
-\newcommand{\im}{\textsf{IM}}
 
 \title{Notes on Influence Maximization}
-\author{
-    Bhargav Samineni\\
-    %New Jersey Institute of Technology\\
-    %\email{bs567@njit.edu}
-}
-\date{} 
+%\title{Influence Maximization while Exploring a Network}
+\author{Bhargav Samineni}
+\date{}
 
 \begin{document}
-    \maketitle  
 
-    \begin{abstract}
-
-    \end{abstract}
-    \newpage
- 
-    \section{Introduction}
-    test citation \cite{kempe2003maximizing, kempe2005influential}. \citet{kempe2003maximizing} asdf. 
-
-    \begin{theorem}
-        test theorem 
-        \label{thm:test}
-    \end{theorem}
-    \begin{proof}[of \cref{thm:test}]
-        test proof
-        \begin{equation}
-            asdf
-            \label{eq:test}
-        \end{equation}
-    \end{proof}
-
-    In \cref{thm:test} we show \(x\) and \(y\). As shown in \cref{eq:test}
+    \maketitle
+    
+    \input{sections/intro}
+    \input{sections/approx_algs}
+    
+    %\section{Graph Exploration}
+    %\NOTE{The graph exploration problem may relate to slowly uncovering a graph with a budget $B$.}
 
     \newpage
-    % Delete prev .bbl file if switching between biblatex and bibtex
+    \printbibliography
 
-    %\printbibliography     % For biblatex
-    \bibliography{refs}     % For bibtex/natbib
- 
 \end{document}
+ 

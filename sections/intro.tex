@@ -1,0 +1,48 @@
+\section{Introduction}
+In social networks, a natural question to consider is how ideas and information may spread through them. Motivated by applications to viral marketing, \citet{domingos2001mining} considered this problem 
+from the perspective of finding an initial set of nodes that could be targeted (for example with free samples) such that these nodes would spread the influence of a product throughout the network. Influence would be spread through a \textquote{word of mouth} effect where the initial nodes would recommend product adoption to their connections, who recommend it to their connections, and so on. 
+This would cause a cascade of adoption in the network, with the ultimate goal of achieving the largest expected number of influenced nodes at the end of the process. 
+This type of problem formulation has applications beyond marketing, such as in the study of how infectious diseases spread.  
+
+\subsection{Influence Maximization}
+\citet{kempe2003maximizing, kempe2005influential} later formalized this model as a discrete optimization problem concerned with the spread of influence in a network.
+Given some stochastic model of diffusion through a network and a node set $A$, the number of active (i.e.\! influenced) nodes at the end of a diffusion cascade started by $A$ is denoted by $\func{\varphi}{A}$. 
+Note that this is a random variable as the diffusion model is probabilistic. The \emph{influence} of $A$, denoted by $\infl{A}$, is then the expected value of the number of active nodes at the end of the diffusion process started by $A$ (i.e.\! $\infl{A} = \EX{\func{\varphi}{A}}$).
+The \textsf{Influence Maximization (InfMax)} problem looks to find, for a parameter $k$, a \textquote{seed} set of nodes of size $k$ that maximizes influence. 
+Under most diffusion models, this problem is $\NPH$ \cite{kempe2003maximizing, kempe2005influential}. 
+
+\begin{problem}[\textsf{InfMax}]
+    Given a digraph $G = \lrp{V, E}$, a model for diffusion, and an integer $k$, find a seed set $S \subseteq V$ of size $k$
+    such that $\infl{S}$ is maximized. 
+    \label{prob:infmax}
+\end{problem}
+
+\subsection{Diffusion Models}
+For the purposes of a diffusion model, nodes in the network can either be active or inactive. These models are typically progressive, meaning that once a node becomes active, it cannot turn inactive. Denote the set of in-neighbors of a node $v$ by $\inneigh{v}$. Two common types of diffusion models are described below. 
+
+\begin{definition}[LT Model]
+    \label{def:linear_threshold}
+    The \emph{Linear Threshold} model is defined by a digraph $G = (V, E)$ and an edge weight function $w: E \rightarrow (0, 1]$, where each node $v \in V$ is associated with some threshold $\theta_v$ and the weight of an edge $\lrp{u, v} \in E$ denotes the degree of influence $u$ has on $v$.
+    Notably, $\theta_v$ is sampled uniformly at random from $\lrb{0, 1}$ and $\sum_{\lrc{u \;\mid\; u \in \Gamma \lrp{v}}} \func{w}{u,v} \leq 1$ for each $v \in V$. On an input set $S$, the model works as follows:
+    \begin{enumerate}
+        \item In time step $0$, the nodes in $S$ become activated
+        \item In time step $t$, a node $v$ becomes activated if 
+            \begin{equation*}
+                \sum_{\lrc{u \;\mid\; u \in \Gamma(v) \text{ and } u \text{ is active}}} \func{w}{u,v} \geq \theta_v
+            \end{equation*}
+        \item The process ends after there is a time step with no additional activated nodes
+    \end{enumerate}
+    This process takes at most $\abs{V}$ time steps. 
+\end{definition}
+
+\begin{definition}[IC Model]
+    \label{def:independent_cascade}
+    The \emph{Independent Cascade} model is defined by a digraph $G = (V, E)$ and an edge weight function $p: E \rightarrow (0, 1]$, where the weight of each edge $\lrp{u,v} \in E$ represents the probability that $u$ activates $v$. 
+    On an input set $S$, the model works as follows:
+    \begin{enumerate}
+        \item In time step $0$, the nodes in $S$ become activated
+        \item In time step $t$, each newly activated node $u$ in time step $t-1$ gets one chance to activate each inactivated out-neighbor $v$ with probability $\func{p}{u,v}$
+        \item The process ends after there is a time step with no additional activated nodes
+    \end{enumerate}
+    This process takes at most $D$ time steps, where $D$ is the diameter of $G$
+\end{definition}

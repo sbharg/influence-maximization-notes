@@ -1,0 +1,63 @@
+\section{Approximation Algorithms}
+\citet{kempe2003maximizing} proved that under both the \ltmodel{} and \icmodel{} models, an optimal solution to \infmax{} can be approximated \
+to within a factor of $\lrp{1 - \frac{1}{e} - \varepsilon}$, where $\varepsilon \in [0, 1 - \frac{1}{e})$. The core of their argument is that
+under these models, the influence function $\sigma$ satisfies the property of submodularity. 
+
+\begin{definition}[Submodularity]
+    \label{def:submod}
+    Let $U$ be some universal set. A function $f: U \rightarrow \R$ is submodular if it satisfies 
+    \begin{equation}
+        \func{f}{A \cup \lrc{e}} - \func{f}{A} \geq  \func{f}{B \cup \lrc{e}} - \func{f}{B}
+        \label{eq:submod}
+    \end{equation} 
+    for all sets $A \subseteq B \subseteq U$ and elements $e \in U \sm B$. 
+\end{definition}
+
+If it can be shown that $\sigma$ is non-negative, monotone (i.e.\! non-decreasing), and submodular for some diffusion model, then a result by \citet{nemhauser1978analysis} shows that a simple greedy algorithm for maximizing such a submodular function subject to a cardinality constraint gives a $\lrp{1 - \frac{1}{e}}$ approximation 
+to the optimal solution \footnote{\cite{sviridenko2004note} gives a greedy algorithm with the same approximation ratio for the more general problem of maximizing a non-negative, monotone, submodular function under a knapsack constraint.}. 
+
+\begin{theorem}[\cite{nemhauser1978analysis}]
+    Consider a non-negative, monotone, submodular function $f$ and an integer $k$. Let $S^*$ be the set of size $k$ that maximizes $f$ (i.e.\! the optimal solution). 
+    Let $S$ be the set constructed by iteratively choosing the $k$ elements that give the maximum marginal gain to the function value at each iteration, starting from the empty set. Then $\func{f}{S} \geq \lrp{1 - \frac{1}{e}}\func{f}{S^*}$. 
+    \label{thm:submod_cardin}
+\end{theorem}
+
+Modifying the above greedy approach to instead iteratively choose an element that is within a $\lrp{1-\gamma}$ factor of the 
+maximum marginal gain yields a $\lrp{1 - \frac{1}{e} - \varepsilon}$ approximation to the optimal solution, where $\varepsilon$ depends 
+polynomially on $\gamma$. 
+
+\subsection{Submodularity under the Independent Cascade Model}
+Because of the probabilistic nature of $\sigma$, it is difficult to prove it is submodular directly. Instead, it is helpful to reformulate the problem in terms of \emph{realizations} of the underlying network.
+
+\begin{definition}[Realization]
+    A realization of a graph $G = \lrp{V, E}$ can be thought of as a mapping $\phi : E 
+    \rightarrow \lrc{L, B}$, where edges are given a label $L$ if they are a \emph{live} edge and $B$ if they are a \emph{blocked} edge. A node can be considered active iff there is a path consisting of only live edges between it and another active node. 
+    \label{def:realization}
+\end{definition}
+
+In the \icmodel{} model, an edge $\lrp{u, v}$ is live with probability $\func{p}{u,v}$ and blocked with probability $1 - \func{p}{u,v}$. This defines a probability space of realizations, where each realization denotes a unique configuration of live and blocked edges. 
+
+\begin{theorem}
+    For any instance of the \icmodel{} model, the influence function $\sigma$ is submodular
+    \label{thm:ic_submod}
+\end{theorem}
+\begin{proof}
+    Consider some arbitrary realization $\phi$ of the network $G$. We can now define the function 
+    $\varphi_{\phi}(S)$ that gives the number of active nodes in the realization $\phi$ by initially activating a seed set $S$. Note that this is in fact now a deterministic quantity because we have fixed our choice of $\phi$. Hence, $\func{\sigma_{\phi}}{S} = \EX{ \func{\varphi_{\phi}}{S} } = \func{\varphi_{\phi}}{S}$ is also deterministic. 
+    
+    We now show that $\sigma_{\phi}$ is submodular. Define $R(v, \phi)$ to be the set of nodes that have a direct path from node $v$ consisting of only live edges. Let $A, B$ be two seed node sets such that $A \subseteq B$ and $v$ a node not in $B$. With $A$, the addition of $v$ to it increases $\func{\sigma_{\phi}}{A}$ by $\abs{R(v, \phi) \sm \cup_{u\in A} R(u, \phi)}$, 
+    and similarly with $B$ it increases $\func{\sigma_{\phi}}{B}$ by $\abs{R(v, \phi) \sm \cup_{u\in B} R(u, \phi)}$. However, since clearly $\cup_{u\in A} R(u, \phi) \subseteq \cup_{u\in B} R(u, \phi)$, the amount added to $\func{\sigma_{\phi}}{A}$ is at least the amount added to $\func{\sigma_{\phi}}{B}$. Hence, 
+    \begin{equation*}
+        \func{\sigma_{\phi}}{A \cup \lrc{v}} - \func{\sigma_{\phi}}{A} \geq \func{\sigma_{\phi}}{B \cup \lrc{v}} - \func{\sigma_{\phi}}{B}
+    \end{equation*}
+    which satisfies \cref{def:submod}. 
+    
+    Note that 
+    \begin{equation*}
+        \infl{S} = \sum_{\text{realizations } \phi} \PR{\phi} \func{\sigma_{\phi}}{S}
+    \end{equation*}
+    since the expected number of active nodes at the end of a cascade starting from $S$ is just the weighted average of the number of active nodes found by activating $S$ over all realizations. Since a non-negative linear combination of submodular functions is also submodular, $\sigma$ is submodular. 
+\end{proof}
+
+\subsection{Submodularity under the Linear Threshold Model}
+We again make use of the concept of \realization[realizations]. In the \ltmodel{} model, an edge 
