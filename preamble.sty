@@ -209,12 +209,14 @@
 
 % --Theorem Styling--------------
 \newcommand{\qedsym}{\hfill$\blacksquare$}
-\mdfsetup{skipabove=\topsep,skipbelow=\topsep}
+\mdfsetup{skipabove=\topsep,skipbelow=\topsep,rightmargin=0em,innerrightmargin=0em}
 
 \declaretheoremstyle[
   headfont=\bfseries, 
   bodyfont=\normalfont,
-  headpunct= .,
+  headpunct= ,
+  postheadspace=\newline,
+  postheadhook={\mbox{}\vskip-1.75ex{\color{OliveGreen}\hrule}\vskip1ex\noindent},
   mdframed={
 			linewidth=2pt,
 			rightline=false, topline=false, bottomline=false,
@@ -228,10 +230,11 @@
   bodyfont=\itshape,
   headpunct= ,
   postheadspace=\newline,
+  postheadhook={\mbox{}\vskip-1.75ex{\color{RedOrange}\hrule}\vskip1ex\noindent},
 	mdframed={
 			linewidth=2pt,
 			rightline=false, topline=false, bottomline=false,
-			linecolor=MidnightBlue, backgroundcolor=MidnightBlue!0,
+			linecolor=RedOrange, backgroundcolor=RedOrange!0,
 			nobreak=false,
 		}
 ]{problem}
@@ -241,17 +244,25 @@
 	mdframed={
 			linewidth=2pt,
 			rightline=false, topline=false, bottomline=false,
-			linecolor=RedOrange, backgroundcolor=RedOrange!0,
+			linecolor=MidnightBlue, backgroundcolor=MidnightBlue!5,
 			nobreak=false,
+      innerrightmargin=10pt,
 		}
 ]{thms}
  
 \declaretheoremstyle[
-  spacebelow=\topsep,
   headfont=\itshape,
   bodyfont=\normalfont,
   notefont=\itshape, notebraces={}{},
-  qed=\qedsym
+  qed=\qedsym,
+  preheadhook={\vspace{-\topsep}},
+  mdframed={
+			linewidth=2pt,
+			rightline=false, topline=false, bottomline=false,
+			linecolor=CadetBlue, backgroundcolor=CadetBlue!0,
+			nobreak=false,
+      %innertopmargin=0em
+		}
 ]{proof}
 
 \declaretheorem[style=thms]{theorem, lemma, corollary}
