@@ -1,18 +1,19 @@
 \section{Approximation Algorithms}
+\label{sec:approx_algs}
 \citet{kempe2003maximizing} proved that under both the \ltmodel{} and \icmodel{} models, an optimal solution to \infmax{} can be approximated \
 to within a factor of $\lrp{1 - \frac{1}{e} - \varepsilon}$, where $\varepsilon \in [0, 1 - \frac{1}{e})$. The core of their argument is that
 under these models, the influence function $\sigma$ satisfies the property of submodularity. 
 
 \begin{definition}[Submodularity]
     \label{def:submod}
-    Let $U$ be some universal set. A function $f: U \rightarrow \R$ is submodular if it satisfies 
+    Let $U$ be some universal set. A function $f\colon U \to \R$ is submodular if it satisfies 
     \begin{equation}
         \func{f}{A \cup \lrc{e}} - \func{f}{A} \geq  \func{f}{B \cup \lrc{e}} - \func{f}{B}
         \label{eq:submod}
     \end{equation} 
     for all sets $A \subseteq B \subseteq U$ and elements $e \in U \sm B$. 
 \end{definition}
-
+ 
 If it can be shown that $\sigma$ is non-negative, monotone (i.e.\! non-decreasing), and submodular for some diffusion model, then a result by \citet{nemhauser1978analysis} shows that a simple greedy algorithm for maximizing such a submodular function subject to a cardinality constraint gives a $\lrp{1 - \frac{1}{e}}$ approximation 
 to the optimal solution \footnote{\cite{sviridenko2004note} gives a greedy algorithm with the same approximation ratio for the more general problem of maximizing a non-negative, monotone, submodular function under a knapsack constraint.}. 
 
@@ -22,20 +23,20 @@ to the optimal solution \footnote{\cite{sviridenko2004note} gives a greedy algor
     \label{thm:submod_cardin}
 \end{theorem}
 
-Modifying the above greedy approach to instead iteratively choose an element that is within a $\lrp{1-\gamma}$ factor of the 
-maximum marginal gain yields a $\lrp{1 - \frac{1}{e} - \varepsilon}$ approximation to the optimal solution, where $\varepsilon$ depends 
-polynomially on $\gamma$. 
+As shown in \cref{sec:submod_cardin_modify}, the above greedy approach can be generalized
+to give a $\lrp{1 - \frac{1}{e} - \varepsilon}$ approximation to the optimal solution, where $\varepsilon \in [0, 1 - \frac{1}{e}]$. 
 
 \subsection{Submodularity under the Independent Cascade Model}
 Because of the probabilistic nature of $\sigma$, it is difficult to prove it is submodular directly. Instead, it is helpful to reformulate the problem in terms of \emph{realizations} of the underlying network.
 
 \begin{definition}[Realization]
-    A realization of a graph $G = \lrp{V, E}$ can be thought of as a mapping $\phi : E 
-    \rightarrow \lrc{L, B}$, where edges are given a label $L$ if they are a \emph{live} edge and $B$ if they are a \emph{blocked} edge. A node can be considered active iff there is a path consisting of only live edges between it and another active node. 
+    A realization of a graph $G = \lrp{V, E}$ can be thought of as a mapping $\phi\colon E 
+    \to \lrc{L, B}$, where edges are given a label $L$ if they are a \emph{live} edge and $B$ if they are a \emph{blocked} edge. A node can be considered active iff there is a path consisting of only live edges between it and another active node. 
     \label{def:realization}
 \end{definition}
 
-In the \icmodel{} model, an edge $\lrp{u, v}$ is live with probability $\func{p}{u,v}$ and blocked with probability $1 - \func{p}{u,v}$. This defines a probability space of realizations, where each realization denotes a unique configuration of live and blocked edges. 
+This defines a probability space of $2^m$ realizations, where each realization denotes a unique configuration of live and blocked edges. 
+In the \icmodel{} model, an edge $\lrp{u, v}$ is live with probability $\func{p}{u,v}$ and blocked with probability $1 - \func{p}{u,v}$. 
 
 \begin{theorem}
     For any instance of the \icmodel{} model, the influence function $\sigma$ is submodular.

@@ -103,21 +103,21 @@
 % --Colors + Refs----------------
 %\RequirePackage{color}
 \RequirePackage[usenames, dvipsnames]{xcolor}
-\definecolor{linkcolor}{rgb}{0, 0.25, 0.75}
+\definecolor[named]{LinkColor}{rgb}{0, 0.25, 0.75}
 \RequirePackage[framemethod=TikZ]{mdframed}
 
 \RequirePackage{hyperref}
 \hypersetup{
   colorlinks=true,
-  linkcolor= linkcolor,
-  citecolor= linkcolor,
+  linkcolor= LinkColor,
+  citecolor= LinkColor,
 }
 \RequirePackage[nameinlink,capitalize]{cleveref}
  
 % --Algorithms-------------------
 \RequirePackage{algorithm}
 \RequirePackage[endLComment=]{algpseudocodex}
-%\RequirePackage[commentColor=linkcolor]{algpseudocodex}
+%\RequirePackage[commentColor=LinkColor]{algpseudocodex}
 
 % --Tikz + Graphics--------------
 \RequirePackage{tikz}
@@ -151,8 +151,9 @@
 \newcommand{\powerset}{\ensuremath{\mathcal{P}}}
 
 % --Probability------------------
-\newcommand{\EX}[1]{\ensuremath{\mathbb{E}\! \lrb{#1}}}
-\newcommand{\PR}[1]{\ensuremath{\mathrm{Pr}\! \lrb{#1}}}
+\DeclareMathOperator*{\E}{\mathbb{E}}
+\newcommand{\EX}[1]{\ensuremath{\E \lrb{#1}}}
+\newcommand{\PR}[1]{\ensuremath{\Pr \lrb{#1}}}
 
 % --Complexity-------------------
 \newcommand{\NP}{\textsf{NP}}
@@ -204,23 +205,33 @@
 \newcommand{\NOTE}[1]{\textcolor{OrangeRed}{{\bf NOTE:}} #1}
 \newcommand{\cc}{\textcolor{red}{\bf [citation(s)]}}
 \newcommand{\email}[1]{\texttt{#1}}
-\newcommand{\f}[2]{\ensuremath{#1 \! \lrp{#2}}}
-\newcommand{\func}[2]{\f{#1}{#2}}
+\newcommand{\f}[2][f]{\ensuremath{#1 \! \lrp{#2}}}
+\newcommand{\func}[2]{\f[#1]{#2}}
 
 % --Theorem Styling--------------
 \newcommand{\qedsym}{\hfill$\blacksquare$}
 \mdfsetup{skipabove=\topsep,skipbelow=\topsep,rightmargin=0em,innerrightmargin=0em}
+
+%\definecolor[named]{ThmColor}{cmyk}{0.58,0.18,0.00,0.42}
+%\definecolor[named]{ProofColor}{cmyk}{0.22,0.13,0.00,0.47}
+%\definecolor[named]{ProbColor}{cmyk}{0.00,0.77,0.87,0.00}
+%\definecolor[named]{DefColor}{cmyk}{0.56,0.00,0.32,0.33}
+\definecolor[named]{ThmColor}{HTML}{1b4965}
+\definecolor[named]{ProofColor}{HTML}{949698}
+\definecolor[named]{ProbColor}{HTML}{F26035}
+\definecolor[named]{DefColor}{HTML}{007800}
+\definecolor[named]{ClaimColor}{HTML}{7977B8}
 
 \declaretheoremstyle[
   headfont=\bfseries, 
   bodyfont=\normalfont,
   headpunct= ,
   postheadspace=\newline,
-  postheadhook={\mbox{}\vskip-1.75ex{\color{OliveGreen}\hrule}\vskip1ex\noindent},
+  postheadhook={\mbox{}\vskip-1.75ex{\color{DefColor}\hrule height 1pt}\vskip1ex\noindent},
   mdframed={
 			linewidth=2pt,
 			rightline=false, topline=false, bottomline=false,
-			linecolor=OliveGreen, backgroundcolor=OliveGreen!0,
+			linecolor=DefColor, backgroundcolor=DefColor!0,
 			nobreak=false
 		}
 ]{def}
@@ -230,11 +241,11 @@
   bodyfont=\itshape,
   headpunct= ,
   postheadspace=\newline,
-  postheadhook={\mbox{}\vskip-1.75ex{\color{RedOrange}\hrule}\vskip1ex\noindent},
+  postheadhook={\mbox{}\vskip-1.75ex{\color{ProbColor}\hrule height 1pt}\vskip1ex\noindent},
 	mdframed={
 			linewidth=2pt,
 			rightline=false, topline=false, bottomline=false,
-			linecolor=RedOrange, backgroundcolor=RedOrange!0,
+			linecolor=ProbColor, backgroundcolor=ProbColor!0,
 			nobreak=false,
 		}
 ]{problem}
@@ -244,11 +255,22 @@
 	mdframed={
 			linewidth=2pt,
 			rightline=false, topline=false, bottomline=false,
-			linecolor=MidnightBlue, backgroundcolor=MidnightBlue!5,
+			linecolor=ThmColor, backgroundcolor=ThmColor!7,
 			nobreak=false,
       innerrightmargin=10pt,
 		}
 ]{thms}
+
+\declaretheoremstyle[
+  bodyfont=\itshape,
+	mdframed={
+			linewidth=2pt,
+			rightline=false, topline=false, bottomline=false,
+			linecolor=ClaimColor, backgroundcolor=ClaimColor!7,
+			nobreak=false,
+      innerrightmargin=10pt,
+		}
+]{claims}
  
 \declaretheoremstyle[
   headfont=\itshape,
@@ -259,14 +281,14 @@
   mdframed={
 			linewidth=2pt,
 			rightline=false, topline=false, bottomline=false,
-			linecolor=CadetBlue, backgroundcolor=CadetBlue!0,
+			linecolor=ProofColor, backgroundcolor=ProofColor!0,
 			nobreak=false,
       %innertopmargin=0em
 		}
 ]{proof}
 
 \declaretheorem[style=thms]{theorem, lemma, corollary}
-\declaretheorem[style=plain]{claim, conjecture, proposition, observation, remark}
+\declaretheorem[style=claims]{claim, conjecture, proposition, observation, remark}
 \declaretheorem[style=problem]{problem}
 \declaretheorem[style=def]{definition}
 
