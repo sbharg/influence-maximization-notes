@@ -22,8 +22,7 @@ Under most diffusion models, this problem is $\NPH$ \cite{kempe2003maximizing, k
 For the purposes of a diffusion model, nodes in the network can either be active or inactive. These models are typically progressive, meaning that once a node becomes active, it cannot turn inactive. Denote the set of in-neighbors of a node $v$ by $\inneigh{v}$. Two common types of diffusion models are described below. 
 
 \begin{definition}[LT Model]
-    \label{def:linear_threshold}
-    The \emph{Linear Threshold} model is defined by a digraph $G = (V, E)$ and an edge weight function $w: E \rightarrow (0, 1]$, where each node $v \in V$ is associated with some threshold $\theta_v$ and the weight of an edge $\lrp{u, v} \in E$ denotes the degree of influence $u$ has on $v$.
+    The \emph{Linear Threshold} model is defined by a digraph $G = (V, E)$ and an edge weight function $w\colon E \to (0, 1]$, where each node $v \in V$ is associated with some threshold $\theta_v$ and the weight of an edge $\lrp{u, v} \in E$ denotes the degree of influence $u$ has on $v$.
     Notably, $\theta_v$ is sampled uniformly at random from $\lrb{0, 1}$ and $\sum_{\lrc{u \;\mid\; u \in \Gamma \lrp{v}}} \func{w}{u,v} \leq 1$ for each $v \in V$. On an input set $S$, the model works as follows:
     \begin{enumerate}
         \item In time step $0$, the nodes in $S$ become activated
@@ -34,11 +33,11 @@ For the purposes of a diffusion model, nodes in the network can either be active
         \item The process ends after there is a time step with no additional activated nodes
     \end{enumerate}
     This process takes at most $\abs{V}$ time steps. 
+    \label{def:linear_threshold}
 \end{definition}
 
 \begin{definition}[IC Model]
-    \label{def:independent_cascade}
-    The \emph{Independent Cascade} model is defined by a digraph $G = (V, E)$ and an edge weight function $p: E \rightarrow (0, 1]$, where the weight of each edge $\lrp{u,v} \in E$ represents the probability that $u$ activates $v$. 
+    The \emph{Independent Cascade} model is defined by a digraph $G = (V, E)$ and an edge weight function $p\colon E \to (0, 1]$, where the weight of each edge $\lrp{u,v} \in E$ represents the probability that $u$ activates $v$. 
     On an input set $S$, the model works as follows:
     \begin{enumerate}
         \item In time step $0$, the nodes in $S$ become activated
@@ -46,4 +45,5 @@ For the purposes of a diffusion model, nodes in the network can either be active
         \item The process ends after there is a time step with no additional activated nodes
     \end{enumerate}
     This process takes at most $D$ time steps, where $D$ is the diameter of $G$.
+    \label{def:independent_cascade}
 \end{definition}

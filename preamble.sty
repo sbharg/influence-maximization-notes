@@ -98,6 +98,8 @@
 \RequirePackage{amssymb}
 \RequirePackage{mathtools}
 \RequirePackage{amsthm}
+\RequirePackage[c2, nocomma]{optidef}
+\RequirePackage{bm}
 \RequirePackage{thmtools}
 
 % --Colors + Refs----------------
@@ -113,7 +115,7 @@
   citecolor= LinkColor,
 }
 \RequirePackage[nameinlink,capitalize]{cleveref}
- 
+
 % --Algorithms-------------------
 \RequirePackage{algorithm}
 \RequirePackage[endLComment=]{algpseudocodex}
@@ -190,6 +192,7 @@
 \def\calC{\mathcal{C}}
 \def\calX{\mathcal{X}}
 \def\calY{\mathcal{Y}}
+\def\calS{\mathcal{S}}
  
 % --Algorithms-------------------
 \newcommand{\Algin}{\Statex \textbf{Input:} }
@@ -207,6 +210,7 @@
 \newcommand{\email}[1]{\texttt{#1}}
 \newcommand{\f}[2][f]{\ensuremath{#1 \! \lrp{#2}}}
 \newcommand{\func}[2]{\f[#1]{#2}}
+\newcommand{\OPT}{\ensuremath{\mathrm{OPT}}}
 
 % --Theorem Styling--------------
 \newcommand{\qedsym}{\hfill$\blacksquare$}
@@ -216,18 +220,19 @@
 %\definecolor[named]{ProofColor}{cmyk}{0.22,0.13,0.00,0.47}
 %\definecolor[named]{ProbColor}{cmyk}{0.00,0.77,0.87,0.00}
 %\definecolor[named]{DefColor}{cmyk}{0.56,0.00,0.32,0.33}
-\definecolor[named]{ThmColor}{HTML}{1b4965}
+\definecolor[named]{ThmColor}{HTML}{4682B4}
 \definecolor[named]{ProofColor}{HTML}{949698}
 \definecolor[named]{ProbColor}{HTML}{F26035}
-\definecolor[named]{DefColor}{HTML}{007800}
+\definecolor[named]{DefColor}{HTML}{507D2A}
 \definecolor[named]{ClaimColor}{HTML}{7977B8}
+\definecolor[named]{ExerciseColor}{HTML}{933D41}
 
 \declaretheoremstyle[
   headfont=\bfseries, 
   bodyfont=\normalfont,
   headpunct= ,
   postheadspace=\newline,
-  postheadhook={\mbox{}\vskip-1.75ex{\color{DefColor}\hrule height 1pt}\vskip1ex\noindent},
+  postheadhook={\mbox{}\vskip-1.75ex{\color{DefColor}\hrule height 1pt}\vspace{1ex}\noindent},
   mdframed={
 			linewidth=2pt,
 			rightline=false, topline=false, bottomline=false,
@@ -249,6 +254,22 @@
 			nobreak=false,
 		}
 ]{problem}
+
+\declaretheoremstyle[
+	headfont=\bfseries, 
+  bodyfont=\itshape,
+  headpunct= ,
+  postheadspace=\newline,
+  %postheadhook={\mbox{}\vskip-1.75ex{\color{ExerciseColor}\hrule height 1pt}\vskip1ex\noindent},
+	mdframed={
+			linewidth=2pt,
+			rightline=false, topline=false, bottomline=false,
+			linecolor=ExerciseColor, backgroundcolor=ExerciseColor!0,
+			nobreak=false,
+      skipbelow=0
+		}
+]{exercise}
+
 
 \declaretheoremstyle[
   bodyfont=\itshape,
@@ -291,10 +312,12 @@
 \declaretheorem[style=claims]{claim, conjecture, proposition, observation, remark}
 \declaretheorem[style=problem]{problem}
 \declaretheorem[style=def]{definition}
+\declaretheorem[style=exercise, numberwithin=section]{exercise}
 
 \let\proof\relax
 \declaretheorem[numbered=no, style=proof]{proof}
 \declaretheorem[numbered=no, style=proof, name=Proof Sketch]{proofsketch}
+\declaretheorem[numbered=no, style=proof, name=Solution]{solution}
 
 % --Cleverref--------------------
 \crefname{theorem}{Theorem}{Theorems}
@@ -307,6 +330,7 @@
 \crefname{remark}{Remark}{Remarks}
 \crefname{problem}{Problem}{Problems}
 \crefname{definition}{Def.}{Defs.}
+\crefname{exercise}{Exercise}{Exercises}
 \crefname{algorithm}{Algorithm}{Algorithms}
 \crefname{figure}{Fig.}{Figs.}
 \crefname{table}{Table}{Tables}

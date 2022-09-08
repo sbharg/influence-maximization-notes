@@ -1,17 +1,17 @@
 \section{Approximation Algorithms}
 \label{sec:approx_algs}
-\citet{kempe2003maximizing} proved that under both the \ltmodel{} and \icmodel{} models, an optimal solution to \infmax{} can be approximated \
-to within a factor of $\lrp{1 - \frac{1}{e} - \varepsilon}$, where $\varepsilon \in [0, 1 - \frac{1}{e})$. The core of their argument is that
+\citet{kempe2003maximizing} proved that under both the \ltmodel{} and \icmodel{} models, an optimal solution to \infmax{} can be approximated
+to within a factor of $\lrp{1 - \frac{1}{e} - \varepsilon}$, where $\varepsilon \in [0, 1 - \frac{1}{e}]$. The core of their argument is that
 under these models, the influence function $\sigma$ satisfies the property of submodularity. 
 
 \begin{definition}[Submodularity]
-    \label{def:submod}
     Let $U$ be some universal set. A function $f\colon U \to \R$ is submodular if it satisfies 
     \begin{equation}
         \func{f}{A \cup \lrc{e}} - \func{f}{A} \geq  \func{f}{B \cup \lrc{e}} - \func{f}{B}
         \label{eq:submod}
     \end{equation} 
-    for all sets $A \subseteq B \subseteq U$ and elements $e \in U \sm B$. 
+    for all sets $A \subseteq B \subseteq U$ and elements $e \in U \sm B$.
+    \label{def:submod} 
 \end{definition}
  
 If it can be shown that $\sigma$ is non-negative, monotone (i.e.\! non-decreasing), and submodular for some diffusion model, then a result by \citet{nemhauser1978analysis} shows that a simple greedy algorithm for maximizing such a submodular function subject to a cardinality constraint gives a $\lrp{1 - \frac{1}{e}}$ approximation 
