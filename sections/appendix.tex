@@ -60,10 +60,11 @@ We first prove the following two claims.
     The base case follows from \cref{claim:submod_ineq}:
     \begin{align*}
         \f{S_1} = \f{S_1} - \f{S_0} &\geq \frac{1 - \gamma}{k} \lrp{\f{S_0 \cup  S^{\ast}} - \f{S_0}} \\
-        &> \lrp{\frac{1}{k} - \gamma} \f{S^{\ast}} \\
-        &> \lrp{1 - \lrp{1 - \frac{1}{k}} - \frac{\gamma k^2 + \gamma - \gamma^2 k}{k^2}} \f{S^{\ast}}
+        &> \lrp{\frac{1}{k} - \gamma} \f{S^{\ast}}
+        %&> \lrp{1 - \lrp{1 - \frac{1}{k}} - \frac{\gamma k^2 + \gamma - \gamma^2 k}{k^2}} \f{S^{\ast}}
     \end{align*}
-    where $\varepsilon = \frac{\gamma k^2 + \gamma - \gamma^2 k}{k^2}$. For the induction case, assume the claim holds for $i = j$. Then, 
+    %where $\varepsilon = \frac{\gamma k^2 + \gamma - \gamma^2 k}{k^2}$. For the induction case, assume the claim holds for $i = j$. Then, 
+    where $\varepsilon = \gamma$. For the induction case, assume the claim holds for $i = j$. Then, 
     \begin{align*}
         \f{S_{j+1}} - \f{S_j} &\geq \frac{1-\gamma}{k} \lrp{\f{S_j \cup  S^{\ast}} - \f{S_j}}
         \tag*{(by \cref{claim:submod_ineq})}\\
@@ -76,9 +77,9 @@ We first prove the following two claims.
         \\
         &\geq \f{S^{\ast}} \lrp{1 - \lrp{1 - \frac{1}{k}}^{j+1} -\gamma + \frac{\gamma}{k} \lrp{\frac{1}{k} - \gamma}} 
         \tag*{($j = 1$ is the maximizer)}\\
-        &= \f{S^{\ast}} \lrp{1 - \lrp{1 - \frac{1}{k}}^{j+1} - \lrp{\frac{\gamma k^2 + \gamma - \gamma^2 k}{k^2}}}
+        &= \f{S^{\ast}} \lrp{1 - \lrp{1 - \frac{1}{k}}^{j+1} - \lrp{\frac{\gamma k^2 - \gamma + \gamma^2 k}{k^2}}}
     \end{align*} 
-    where $\varepsilon = \frac{\gamma k^2 + \gamma - \gamma^2 k}{k^2}$, which proves the induction case. 
+    where $\varepsilon = \frac{\gamma k^2 - \gamma + \gamma^2 k}{k^2}$, which proves the induction case. 
 \end{proof}
 
 %Using the previous claim gives the proof of \cref{thm:submod_cardin_gen} as an immediate consequence. 
@@ -87,5 +88,5 @@ We first prove the following two claims.
     \begin{equation*}
         \f{S_k} = \f{S} \geq \lrp{1 - \lrp{1 - \frac{1}{k}}^k - \varepsilon}\f{S^{\ast}} > \lrp{1 - \frac{1}{e} - \varepsilon}\f{S^{\ast}}. 
     \end{equation*}
-    To find the appropriate $\gamma$ value, solve the quadratic equation $-\gamma^2k + \gamma \lrp{k^2+1} - \varepsilon k^2 = 0$ and take the root less than $1$.  
+    To find the appropriate $\gamma$ value, solve the quadratic equation $\gamma^2k + \gamma \lrp{k^2-1} - \varepsilon k^2 = 0$ and take the root less than $1$.  
 \end{proof}
