@@ -23,8 +23,12 @@ to the optimal solution \footnote{\cite{sviridenko2004note} gives a greedy algor
     \label{thm:submod_cardin}
 \end{theorem}
 
-As shown in \cref{sec:submod_cardin_modify}, the above greedy approach can be generalized
-to give a $\lrp{1 - \frac{1}{e} - \varepsilon}$ approximation to the optimal solution, where $\varepsilon \in [0, 1 - \frac{1}{e}]$. 
+A generalization of the above theorem, where the greedy algorithm iteratively picks elements within a factor of 
+$(1-\varepsilon)$ of the largest marginal gain at each step gives a $(1 - \frac{1}{e} - \varepsilon^\prime)$ approximation, 
+where $\varepsilon^\prime$ depends polynomially on $\varepsilon$. 
+
+%As shown in \cref{sec:submod_cardin_modify}, the above greedy approach can be generalized
+%to give a $\lrp{1 - \frac{1}{e} - \varepsilon}$ approximation to the optimal solution, where $\varepsilon \in [0, 1 - \frac{1}{e}]$. 
 
 \subsection{Submodularity under the Independent Cascade Model}
 Because of the probabilistic nature of $\sigma$, it is difficult to prove it is submodular directly. Instead, it is helpful to reformulate the problem in terms of \emph{realizations} of the underlying network.
@@ -55,10 +59,58 @@ In the \icmodel{} model, an edge $\lrp{u, v}$ is live with probability $\func{p}
     
     Note that 
     \begin{equation*}
-        \infl{S} = \sum_{\text{realizations } \phi} \PR{\phi} \func{\sigma_{\phi}}{S}
+        \infl{S} = \sum_{\text{realizations } \phi} \Pr \lrp{\phi} \func{\sigma_{\phi}}{S}
     \end{equation*}
     since the expected number of active nodes at the end of a cascade starting from $S$ is just the weighted average of the number of active nodes found by activating $S$ over all realizations. Since a non-negative linear combination of submodular functions is also submodular, $\sigma$ is submodular. 
 \end{proof}
 
 \subsection{Submodularity under the Linear Threshold Model}
-We again make use of the concept of \realization[realizations]. In the \ltmodel{} model, an edge
+We again make use of the concept of realizations in \cref{def:realization}. 
+However, in general, fixing a choice of threshold values does not guarantee that the influence 
+function will be submodular. Thus, we require a different analysis compared to the \icmodel{} model.
+
+In the \ltmodel{} model, an edge cannot be 
+considered live or blocked independently of the status of other edges. Instead, at most one incoming edge 
+for each node can be considered live. More formally, a node $v$ selects at most one its in-edges at random, where each edge
+is chosen with probability $\f[w]{u, v}$ where $u \in \f[\Gamma]{v}$, or chooses no edge with probability 
+$1 - \sum_{u \in \Gamma(v)} \f[w]{u,v}$ to be live. The rest of the edges are considered blocked.  
+
+\begin{claim}
+    For a seed set $S$, the following result in the same distributions over active sets of nodes: 
+    \begin{enumerate}
+        \item Running the Linear Threshold process to completion starting from $S$
+        \item Creating realizations as defined above and initially activating $S$. 
+    \end{enumerate}
+\end{claim}
+\begin{proof}
+    We first consider the \ltmodel{} process. We can extend the notion of influence weight by defining 
+    $\f[w]{u, v} = 0$ if $u \notin \f[\Gamma]{v}$. Define $S_t$ to be the set of active nodes at the end of iteration $t$, where $t = 0, 1, \ldots$ and $S_0 = S$. 
+    If a node $v$ has not become active at the end of iteration $t$, the probability it becomes active at the end of iteration $t+1$
+    is equal to the chance that the influence weights in $S_t \sm S_{t-1}$ push it over its threshold given that its threshold has not already been passed. 
+    From a notational standpoint, this is equivalent to 
+    \begin{align*}
+        \Pr \lrp{\theta_v \leq \sum_{u \in S_t} \f[w]{u,v} \; \Biggl\lvert \; \theta_v > \sum_{u \in S_{t-1}} \f[w]{u,v}} &= 
+        \frac{\Pr \lrp{\sum_{u \in S_{t-1}} \f[w]{u,v} < \theta_v \leq \sum_{u \in S_t} \f[w]{u,v}}}{\Pr \lrp{\theta_v > \sum_{u \in S_{t-1}} \f[w]{u,v}}}\\
+        &=  \frac{\sum_{u \in S_t \sm S_{t-1}} \f[w]{u, v}}{1 - \sum_{u \in S_{t-1}} \f[w]{u, v}}
+    \end{align*}
+    since $\theta_v$ is sampled uniformly at random from $\lrb{0, 1}$.  
+
+    We now consider the realization process, gradually revealing active nodes in iterations as in the \ltmodel{} model. Define $S_t$ for iterations $t = 0, 1, \ldots$ as before and additionally 
+    define $S_t^\prime = S_t \sm S_{t-1}$ where $S_0^\prime = S_0$. Starting with $S_0^\prime$, for each node $v$ with at least one in-edge from 
+    $S_0^\prime$, determine if $v$ has a live edge coming from this set. If so, then $v$ becomes active with $v \in S_1^\prime$; otherwise we keep the source 
+    of $v$'s live in-edge (if it has one) unknown. Repeat this process starting from $S_1^\prime$, thus defining sets $S_2^\prime, S_3^\prime, \ldots$. 
+    If $v$ has not become active at the end of iteration $t$, then the probability it is determined to be active at the end of iteration $t+1$ is equivalent 
+    to the chance that its live edge comes from $S_t^\prime$ given that its live edge has not come from $S_0^\prime, \ldots, S_{t-1}^\prime$. 
+    Namely, this probability is 
+    \begin{equation*}
+        \frac{\sum_{u \in S_t^\prime} \f[w]{u, v}}{1 - \sum_{u \in \cup_{i=0}^{t-1} S_i^\prime} \f[w]{u, v}} = \frac{\sum_{u \in S_t \sm S_{t-1}} \f[w]{u, v}}{1 - \sum_{u \in S_{t-1}} \f[w]{u, v}}. 
+    \end{equation*}
+    Since these probabilities are equivalent in both the \ltmodel{} model and realization process, we have the proof of the claim. 
+\end{proof}
+
+Since we have established that the notion of activations through realizations and live edge paths as defined before 
+is equivalent to the \ltmodel{} model, we get the following theorem whose proof is identical to that of \cref{thm:ic_submod}. 
+\begin{theorem}
+    For any instance of the \ltmodel{} model, the influence function $\sigma$ is submodular. 
+    \label{thm:lt_submod}
+\end{theorem}

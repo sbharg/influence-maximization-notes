@@ -3,16 +3,104 @@
 
 \begin{theorem}
     Consider a non-negative, monotone, submodular function $f$ and an integer $k$. Let $S^*$ be the set of size $k$ that maximizes $f$ (i.e.\! the optimal solution). 
+    Choose some $0 \leq \varepsilon \leq \frac{1}{k}$.
+    If $S$ is the set constructed by iteratively choosing $k$ elements that maximize the marginal gain of the function value 
+    to within a factor of $\lrp{1-\varepsilon}$ at each step, starting from the empty set, 
+    then $\func{f}{S} \geq \lrp{1 - \frac{1}{e} - \varepsilon}\func{f}{S^*}$. 
+    \label{thm:submod_cardin_gen}
+\end{theorem}
+
+Let $S^{\ast} = \lrc{s_1^{\ast}, \ldots, s_k^{\ast}}$ be the optimal solution and $S = \lrc{s_1, \ldots, s_k}$ the solution constructed by the above greedy algorithm.
+Define $S_i^{\ast} = \lrc{s_i^{\ast}, \ldots, s_i^{\ast}}$ and similarly $S_i = \lrc{s_1, \ldots, s_i}$ for $i = 0, \ldots, k$, where $S_0^{\ast} = \emptyset = S_0$. 
+We first prove the following two claims. 
+
+\begin{claim}
+    \begin{equation*}
+        \f{S_{i+1}} - \f{S_i} \geq \frac{1-\varepsilon}{k} \lrp{\f{S_i \cup S^{\ast}} - \f{S_i}} 
+        \quad \quad \textnormal{for each } i = 0, \ldots, k-1.
+    \end{equation*}
+    \label{claim:submod_ineq}
+\end{claim}
+\begin{proof} 
+    Choose some $0 \leq i \leq k-1$. By definition of the greedy approach,
+    \begin{align}
+        \nonumber 
+        \f{S_{i+1}} - \f{S_i} &\geq \lrp{1-\varepsilon} \lrp{\max_{s \in U} \lrp{\f{S_i \cup \lrc{s}} - \f{S_i}}}  \\
+        \label{eq:submod_maximizer}                            
+        &\geq \lrp{1-\varepsilon} \frac{1}{k} \sum_{j=1}^{k} \lrp{\f{S_i \cup \lrc{s_j^{\ast}}} - \f{S_i}}
+    \end{align}
+    where the second inequality comes from the fact that since $s$ is a maximizer, an average of the marginal gain from others elements in $U$ 
+    (in this case specifically in $S^{\ast}$) must be at most the marginal value $s$ provides. 
+    
+    By submodularity of $f$, 
+    \begin{align*}
+        \f{S_i \cup \lrc{s_j^{\ast}}} - \f{S_i} &\geq 
+        \f{S_i \cup S_{j-1}^{\ast} \cup  \lrc{s_j^{\ast}}} - \f{S_i \cup S_{j-1}^{\ast}} \\&= 
+        \f{S_i \cup  S_j^{\ast}} - \f{S_i \cup S_{j-1}^{\ast}}
+    \end{align*}
+    since $S_i \sse S_i \cup S_{j-1}^{\ast}$. Using this inequality with \cref{eq:submod_maximizer}, we get
+    \begin{align*}
+        \f{S_{i+1}} - \f{S_i} &\geq \frac{1-\varepsilon}{k} \sum_{j=1}^{k} \lrp{\f{S_i \cup  S_j^{\ast}} - \f{S_i \cup S_{j-1}^{\ast}}}\\
+        &= \frac{1-\varepsilon}{k} \lrp{\f{S_i \cup S_k^{\ast}} - \f{S_i \cup S_0^{\ast}}}\\
+        &= \frac{1-\varepsilon}{k} \lrp{\f{S_i \cup S^{\ast}} - \f{S_i}}
+    \end{align*}
+    where the equality comes from the fact that the summation telescopes. 
+\end{proof}
+
+\begin{claim}
+    \begin{equation*}
+        \f{S_i} \geq \lrp{1 - \lrp{1 - \frac{1}{k}}^i - \varepsilon}\f{S^{\ast}} \quad \quad 
+        \textnormal{for each } i = 1, \ldots, k.
+    \end{equation*}
+    \label{claim:submod_ineq_induction}
+\end{claim}
+\begin{proof}
+    To simplify analysis, we assume WLOG that $\f{\emptyset} = 0$. We prove by induction. 
+    The base case $i=1$ follows from \cref{claim:submod_ineq}:
+    \begin{align*}
+        \f{S_1} = \f{S_1} - \f{S_0} &\geq \frac{1 - \varepsilon}{k} \lrp{\f{S_0 \cup  S^{\ast}} - \f{S_0}} 
+        \\&> \lrp{\frac{1}{k} - \varepsilon} \f{S^{\ast}}. 
+        %&> \lrp{1 - \lrp{1 - \frac{1}{k}} - \frac{\gamma k^2 + \gamma - \gamma^2 k}{k^2}} \f{S^{\ast}}
+    \end{align*}
+    %where $\varepsilon = \frac{\gamma k^2 + \gamma - \gamma^2 k}{k^2}$. For the induction case, assume the claim holds for $i = j$. Then, 
+    %where $\varepsilon = \frac{\gamma}{k}$. 
+    For the induction case, assume the claim holds for $i = j$. Then, 
+    \begin{align*}
+        \f{S_{j+1}} - \f{S_j} &\geq \frac{1-\varepsilon}{k} \lrp{\f{S_j \cup  S^{\ast}} - \f{S_j}}
+        \tag*{(by \cref{claim:submod_ineq})}\\
+        &\geq \frac{1-\varepsilon}{k} \lrp{\f{S^{\ast}} - \f{S_j}}
+        \tag*{(by monotonicity)}\\
+        \f{S_{j+1}} &\geq \frac{1-\varepsilon}{k} \f{S^{\ast}} + \frac{k - 1 + \varepsilon}{k} \f{S_j}\\
+        &\geq \frac{1-\varepsilon}{k} \f{S^{\ast}} + \frac{k-1+\varepsilon}{k}\lrp{1 - \lrp{1 - \frac{1}{k}}^j - \varepsilon} \f{S^{\ast}}
+        \tag*{(by ind. hyp.)}\\ 
+        &= \f{S^{\ast}} \lrp{\frac{1}{k} - \frac{\varepsilon}{k} + \lrp{1 - \frac{1}{k} + \frac{\varepsilon}{k}} \lrp{1 - \lrp{1 - \frac{1}{k}}^j - \varepsilon}} \\
+        &= \f{S^{\ast}} \lrp{1 - \lrp{1 - \frac{1}{k}}^{j+1} -\varepsilon + \frac{\varepsilon}{k} \lrp{1 - \lrp{1 - \frac{1}{k}}^j - \varepsilon}} 
+        \\
+        &\geq \f{S^{\ast}} \lrp{1 - \lrp{1 - \frac{1}{k}}^{j+1} -\varepsilon + \frac{\varepsilon}{k} \lrp{\frac{1}{k} - \varepsilon}} 
+        \tag*{($j = 1$ is the maximizer)}\\
+        &= \f{S^{\ast}} \lrp{1 - \lrp{1 - \frac{1}{k}}^{j+1} - \lrp{\frac{\varepsilon k^2 - \varepsilon + \varepsilon^2 k}{k^2}}}
+        \\ &\geq \f{S^{\ast}} \lrp{1 - \lrp{1 - \frac{1}{k}}^{j+1} - \varepsilon},
+    \end{align*} 
+    which proves the induction case. 
+\end{proof}
+
+%Using the previous claim gives the proof of \cref{thm:submod_cardin_gen} as an immediate consequence. 
+\begin{proof}[of \cref{thm:submod_cardin_gen}]
+    Take $i = k$ in \cref{claim:submod_ineq_induction}. Then 
+    \begin{equation*}
+        \f{S_k} = \f{S} \geq \lrp{1 - \lrp{1 - \frac{1}{k}}^k - \varepsilon}\f{S^{\ast}} > \lrp{1 - \frac{1}{e} - \varepsilon}\f{S^{\ast}}. 
+    \end{equation*}
+\end{proof}
+
+\begin{comment}
+\begin{theorem}
+    Consider a non-negative, monotone, submodular function $f$ and an integer $k$. Let $S^*$ be the set of size $k$ that maximizes $f$ (i.e.\! the optimal solution). 
     Choose some $\varepsilon \in [0, 1 - \frac{1}{e})$.
     There exists some $\gamma \geq 0$ that $\varepsilon$ depends polynomially on such that if $S$ is the set constructed by iteratively choosing $k$ elements that maximize the marginal gain of the function value 
     to within a factor of $\lrp{1-\gamma}$ at each step, 
     then $\func{f}{S} \geq \lrp{1 - \frac{1}{e} - \varepsilon}\func{f}{S^*}$. 
     \label{thm:submod_cardin_gen}
 \end{theorem}
-
-Let $S^{\ast} = \lrc{s_1^{\ast}, \ldots, s_k^{\ast}}$ be the optimal solution and $S = \lrc{s_1, \ldots, s_k}$ the solution constructed by the above greedy algorithm.
-Define $S_i^{\ast} = \lrc{s_1^{\ast}, \ldots, s_i^{\ast}}$ and similarly $S_i = \lrc{s_1, \ldots, s_i}$ for $i = 0, \ldots, k$, where $S_0^{\ast} = \emptyset = S_0$. 
-We first prove the following two claims. 
 
 \begin{claim}
     \begin{equation*}
@@ -49,30 +137,32 @@ We first prove the following two claims.
 
 \begin{claim}
     \begin{equation*}
-        \f{S_i} \geq \lrp{1 - \lrp{1 - \frac{1}{k}}^i - \varepsilon}\f{S^{\ast}} \quad \quad 
+        \f{S_i} \geq \lrp{1 - \lrp{1 - \frac{1}{k}}^i - \gamma}\f{S^{\ast}} \quad \quad 
         \textnormal{for each } i = 1, \ldots, k 
     \end{equation*}
-    where $\varepsilon$ is equivalent to some polynomial function of $\gamma$. 
+    %where $\varepsilon$ is equivalent to some polynomial function of $\gamma$. 
     \label{claim:submod_ineq_induction}
 \end{claim}
 \begin{proof}
     To simplify analysis, we assume WLOG that $\f{\emptyset} = 0$. We prove by induction. 
-    The base case follows from \cref{claim:submod_ineq}:
+    The base case $i=1$ follows from \cref{claim:submod_ineq}:
     \begin{align*}
-        \f{S_1} = \f{S_1} - \f{S_0} &\geq \frac{1 - \gamma}{k} \lrp{\f{S_0 \cup  S^{\ast}} - \f{S_0}} \\
-        &> \lrp{\frac{1}{k} - \gamma} \f{S^{\ast}}
+        \f{S_1} = \f{S_1} - \f{S_0} &\geq \frac{1 - \gamma}{k} \lrp{\f{S_0 \cup  S^{\ast}} - \f{S_0}} 
+        \\&> \lrp{\frac{1}{k} - \gamma} \f{S^{\ast}}. 
         %&> \lrp{1 - \lrp{1 - \frac{1}{k}} - \frac{\gamma k^2 + \gamma - \gamma^2 k}{k^2}} \f{S^{\ast}}
     \end{align*}
     %where $\varepsilon = \frac{\gamma k^2 + \gamma - \gamma^2 k}{k^2}$. For the induction case, assume the claim holds for $i = j$. Then, 
-    where $\varepsilon = \gamma$. For the induction case, assume the claim holds for $i = j$. Then, 
+    %where $\varepsilon = \frac{\gamma}{k}$. 
+    For the induction case, assume the claim holds for $i = j$. Then, 
     \begin{align*}
         \f{S_{j+1}} - \f{S_j} &\geq \frac{1-\gamma}{k} \lrp{\f{S_j \cup  S^{\ast}} - \f{S_j}}
         \tag*{(by \cref{claim:submod_ineq})}\\
-        &\geq \frac{1-\gamma}{k} \lrp{\f{S^{\ast}} - \f{S_j}}\\
+        &\geq \frac{1-\gamma}{k} \lrp{\f{S^{\ast}} - \f{S_j}}
+        \tag*{(by monotonicity)}\\
         \f{S_{j+1}} &\geq \frac{1-\gamma}{k} \f{S^{\ast}} + \frac{k - 1 + \gamma}{k} \f{S_j}\\
         &\geq \frac{1-\gamma}{k} \f{S^{\ast}} + \frac{k-1+\gamma}{k}\lrp{1 - \lrp{1 - \frac{1}{k}}^j - \gamma} \f{S^{\ast}}
         \tag*{(by ind. hyp.)}\\ 
-        &= \f{S^{\ast}} \lrp{\frac{1}{k} - \frac{\gamma}{k} + \lrp{1 - \frac{1}{k} + \frac{\gamma}{k}} \lrp{1 - \lrp{1 - \frac{1}{k}} - \gamma}} \\
+        &= \f{S^{\ast}} \lrp{\frac{1}{k} - \frac{\gamma}{k} + \lrp{1 - \frac{1}{k} + \frac{\gamma}{k}} \lrp{1 - \lrp{1 - \frac{1}{k}}^j - \gamma}} \\
         &= \f{S^{\ast}} \lrp{1 - \lrp{1 - \frac{1}{k}}^{j+1} -\gamma + \frac{\gamma}{k} \lrp{1 - \lrp{1 - \frac{1}{k}}^j - \gamma}} 
         \\
         &\geq \f{S^{\ast}} \lrp{1 - \lrp{1 - \frac{1}{k}}^{j+1} -\gamma + \frac{\gamma}{k} \lrp{\frac{1}{k} - \gamma}} 
@@ -90,3 +180,4 @@ We first prove the following two claims.
     \end{equation*}
     To find the appropriate $\gamma$ value, solve the quadratic equation $\gamma^2k + \gamma \lrp{k^2-1} - \varepsilon k^2 = 0$ and take the non-negative root.  
 \end{proof}
+\end{comment}
