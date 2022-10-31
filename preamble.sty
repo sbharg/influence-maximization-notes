@@ -166,7 +166,10 @@
 \newcommand{\knapsack}{\textsf{Knapsack}}
 \newcommand{\subsetsum}{\textsf{Subset Sum}}
 
-\newcommand{\bigo}[1]{\ensuremath{\operatorname{\mathcal{O}}\!\lrp{#1}}}
+\newcommand{\littleO}[2][]{\func{o_{#1}}{#2}}
+\newcommand{\bigO}[2][]{\func{O_{#1}}{#2}}
+\newcommand{\bigOlog}[2][]{\func{\tilde{O_{#1}}}{#2}}
+
 \newcommand{\bigomega}[1]{\ensuremath{\Omega\!\lrp{#1}}}
 \newcommand{\polyreduce}{\ensuremath{\leq_p}}
 
@@ -211,6 +214,7 @@
 \newcommand{\f}[2][f]{\ensuremath{#1 \! \lrp{#2}}}
 \newcommand{\func}[2]{\f[#1]{#2}}
 \newcommand{\OPT}{\ensuremath{\mathrm{OPT}}}
+\newcommand{\customcite}[1]{\noindent \citeauthor{#1}, \citetitle{#1}, \citeyear{#1}}
 
 % --Theorem Styling--------------
 \newcommand{\qedsym}{\hfill$\blacksquare$}

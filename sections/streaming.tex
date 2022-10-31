@@ -1,0 +1,23 @@
+\section{Influence Maximization while Streaming}
+
+\subsection{Related Work}
+
+\subsubsection{Streaming Social Actions}
+
+\customcite{wang2017real}
+\begin{itemize}[label=--]
+    \itemsep0em 
+    \item Problem Setting: Actions on the network come in the form of a stream. Users in the network can decide to respond to an earlier action in which case they are influenced. Maintain a sliding window $W_t$ of the last $N$ actions. 
+    \item Goal: Return a set of at most $k$ users that achieve the largest influence wrt to $W_t$ (note: influence is calculated according to the last $N$ actions)
+        Setup: Maintain an “influence checkpoint” for indicies in the current window. A checkpoint $C_{t, i}$ is an $\alpha$-approximate solution for the problem on actions $i$ to $N$. 
+    \item Result: Maintain a checkpoint for each index $1, \ldots, N$. When a new action comes from the stream, drop $C_{t-1, 1}$, set $C_{t, i-1} = C_{t-1, i}$, and process the addition of the new action. This gives an $\alpha$-approximation to the problem
+    \item Result: Maintain a sparser number of checkpoints (i.e.\! $\bigO{\frac{\log N}{\varepsilon}}$). This gives an $\frac{\alpha \lrp{1 - \varepsilon}}{2}$-approximate solution to the problem
+\end{itemize}
+
+\subsubsection{Stream of Node Queries}
+
+\customcite{zhao2021query}
+\begin{itemize}[label=--]
+    \itemsep0em 
+    \item Problem Setting: There exists a streaming graph where edge insertions and deletions arrive at some timestamp $t$. 
+\end{itemize}

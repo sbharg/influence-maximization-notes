@@ -1,0 +1,127 @@
+\newcommand{\expim}{\hyperref[prob:exp-infmax]{\textsf{Exp-InfMax}}}
+
+\section{Influence Maximization while Exploring a Network}
+
+\subsection{Related Work}
+
+\subsubsection{Querying a Network}
+
+\customcite{wilder2018maximizing}
+
+\begin{itemize}[label=--]
+    \itemsep0em 
+    \item Starting from an unknown network, use node queries to build a partial network
+    \item Goal: find influential nodes with a query cost that is sublinear in the number of nodes 
+    \item Result: The problem is intractable in general graphs (there exists no approximation algorithm with query cost $\bigO{n^{1-\varepsilon}}$ for some $\varepsilon > 0$)
+    \item Result: When the graph is drawn from a stochastic block model, you can exploit the community structure of the graph 
+    to get an approximation ratio using $\bigO[\varepsilon, \rho]{\log^6 n}$ node queries
+\end{itemize}
+
+\customcite{eckles2019seeding}
+\begin{itemize}[label=--]
+    \itemsep0em 
+    \item Starting from an unknown network, use queries to find influential nodes
+    \item Two different types of queries: edge queries and spread queries 
+    \item Result: For edge queries, there exists no constant factor approximation algorithm using a sub quadratic number of edge queries. 
+    For any $\varepsilon \in (0, 1]$ there exists a poly time alg that influences $(1 - \frac{1}{e}) \OPT - \varepsilon n$ nodes in expectation using 
+    $\bigOlog[\varepsilon]{pn^2 + \sqrt{pn^3}}$ edge queries
+    \item Result: For spread queries, there exists no constant factor approximation algorithm using $\littleO{n}$ spread queries. 
+    For any $\varepsilon \in (0, 1]$ there exists a poly time alg that influences $(1 - \frac{1}{e}) \OPT - \varepsilon n$ nodes in expectation using 
+    $\bigOlog[\varepsilon]{k^2}$ spread queries
+\end{itemize}
+
+\customcite{mihara2015influence}
+
+\customcite{mihara2017effectiveness}
+ 
+\begin{itemize}[label=--]
+    \itemsep0em 
+    \item Starting from an unknown network, use node queries to build a partial network
+    \item Assumes $R$ rounds where in each round, you can select $m$ nodes to be probed and $\kappa$ seed nodes
+    such that the expected number of active nodes in the $R$th round is maximized
+    \item Result: Give heuristic algs that greedily probe and seed nodes with the highest expected degree 
+\end{itemize}
+
+\subsubsection{Partially Observable Networks}
+
+\customcite{eshghi2019efficient}
+\begin{itemize}[label=--]
+    \itemsep0em 
+    \item Assume there exists some underlying network $G$. We are given a subgraph $G_v$ that is the partially observed network
+    \item Assumption: the number of nodes $n$ is known
+    \item Assumption: the structure of the unobserved portion of the network can be drawn from a distribution of $M$ networks 
+    $G_1, \ldots, G_m$ that each have corresponding probability $q_i$ (such that $\sum_{i=1}^{m} q_i = 1$) 
+    \item Goal: Find a seed set of size $k$ in $G_v$ that maximizes influence
+    \item Result: Under the IC and WC models, the influence function is monotone and submodular
+    \item Result: Using the IMM algorithm, they compute a $\lrp{1 - \frac{1}{e} - \varepsilon}$ optimal seed set with high probability 
+\end{itemize}
+
+\subsection{Partially Visible Network}
+\customcite{eshghi2019efficient}
+\begin{problem}[PV-IM]
+    Suppose there exists some underlying directed graph $G = \lrp{V, E}$ where $\abs{V} = n, \abs{E} = m$. If we are given
+    \begin{itemize}[label=--]
+        \itemsep0em 
+        \item a visible induced subgraph of this network $G_v = \lrp{V_v, E_v}$ where $V_v \sse V$
+        %and $E_v = \lrc{e = \lrp{a, b} \in E \colon a, b \in V_v}$
+        \item the structure of the unobserved part of the network is one of $M$ different realizations $G_1, \ldots, G_M$
+        each with respective probability $q_i$ such that $\sum_{i=1}^{M} q_i = 1$ 
+        \item a diffusion model (either Independent Cascade or Weighted Cascade) with edge weight function $p \colon E \rightarrow \lrb{0, 1}$ and positive integer $k$
+    \end{itemize}  
+    find a seed set $S \sse V_v$ of size $k$ that maximizes $\infl{S}$. This is defined to be the a priori expected spread from $S$ among all 
+    realizations (i.e.\! $\infl{S} = \sum_{i=1}^{M} q_i \f[\sigma_i]{S}$ where $\f[\sigma_i]{S}$ is the expected spread of $S$ in the graph $\calG_i = G_v \cup G_i$). 
+\end{problem}
+
+
+Denote by $\calG_i$ a possible realization of the network (i.e.\!  $\calG_i = G_v \cup G_i$). Let $\f[x_j^i]{S}$ be a binary variable 
+denoting whether the $j$th RR set for $\calG_i$ overlaps with any of the nodes in set $S$. Based on this we can define 
+\begin{equation*}
+    \f[F^i]{S} = \frac{1}{\theta_i} \sum_{j=1}^{\theta_i} \f[x_j^i]{S}
+\end{equation*}
+to be the fraction of RR sets generated on $\calG_i$ that $S$ covers. This value is an unbiased estimator of $\f[\sigma_i]{S} / n$, which gives us that 
+$\f[F]{S} = \sum_{i=1}^{M} q_i \f[F^i]{S}$ (i.e.\! the weighted average of the fraction of total RR sets that overlap with $S$) is an unbiased estimator of 
+$\f[\sigma]{S} / n$. 
+ 
+
+Let $S^{\ast}$ be an optimal seed set for this problem. 
+
+\begin{comment}
+The main contribution of this paper is to extend the idea of Reverse Reachable (RR) sets to this new setting. If we denote 
+$\calG_i = G_v \cup G_i$ for an unobserved realization $i$ and $S$ a seed set, then we can define some unbiased estimator of $\infl{S}$ based on the weighted average of the proportion 
+of random RR sets generated for each $\calG_i$ that overlap with $S$. We want this estimator to be close enough to $\infl{S}$ so that a simple greedy algorithm that iteratively adds nodes 
+chooses a seed set within an acceptable range with high probability. This can be accomplished in two steps 
+\begin{enumerate}
+    \item Choosing enough RR sets such that for an optimal seed set $S^{\ast}$, the estimator of $\infl{S^*}$ is close with high probability
+    \item Choosing more RR sets (if needed) to ensure that the influence estimators of suboptimal seed sets will also be close to their expected vale. 
+\end{enumerate}
+
+The paper gives lower bounds on the number of RR sets needed to be chosen for each graph realization $\calG_i$ such that the greedy 
+algorithm gives a $\lrp{1 - \frac{1}{e} - \varepsilon}$ approximation with high probability.  
+\end{comment}
+
+
+\newpage
+\subsection{Introduction}
+Suppose there exists some network $G = (V, E)$. If we are not given the topological structure of the network (i.e.\! we do not know $E$), 
+but are given the number of nodes, one way to explore the network is to query a node to reveal its connections. Through this, we can 
+build a queried network that is a partial observation of the underlying network. 
+The \textsf{Exploratory Influence Maximization (Exp-InfMax)} seeks to first build a queried network 
+using a small (i.e.\! ideally sublinear) number of node queries such that for a given parameter $k$, it looks
+to find a seed set of nodes of size $k$ in the queried network that maximizes influence in the 
+underlying network. 
+
+\begin{problem}[\textsf{Exp-InfMax}]
+    Given an underlying network $G = \lrp{V, E}$ where $\abs{V} = n$ and $\abs{E} = m$, a model for diffusion, an integer $k$, 
+    and a queried network $G_q = \lrp{V_q, E_q}$ where $V_q \sse V$ and $E_q = \lrc{e \in E \;\mid\; e \in V_q \times V_q} $, find a seed set 
+    $S \subseteq V_q$ of size $k$ such that $\f[\sigma_G]{S}$ is maximized. 
+    \label{prob:exp-infmax}
+\end{problem}
+
+This problem is clearly $\NPH$ under the \ltmodel{} and \icmodel{} models as it contains \infmax{} as a special case when the 
+queried network is exactly the underlying network. 
+In general graphs, the following intractability result holds (adopted from \cite{wilder2018maximizing,eckles2019seeding}). 
+
+\begin{theorem}
+    Let $\alpha \in (0, 1]$. There exists no $\alpha$ approximation algorithm to \expim{} using $\littleO{n}$ node queries. 
+    \label{thm:intractability}
+\end{theorem}

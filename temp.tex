@@ -1,0 +1,125 @@
+\documentclass[11pt]{article}
+\usepackage[biblatex]{preamble}
+\addbibresource{refs.bib}
+
+\newcommand{\infmax}{\hyperref[prob:infmax]{\textsf{InfMax}}}
+\newcommand{\infl}[1]{\ensuremath{\func{\sigma}{#1}}}
+\newcommand{\inneigh}[1]{\ensuremath{\func{\Gamma}{#1}}}
+\newcommand{\ltmodel}[1][LT]{\hyperref[def:linear_threshold]{\textsf{#1}}}
+\newcommand{\icmodel}[1][IC]{\hyperref[def:independent_cascade]{\textsf{#1}}}
+
+\title{Notes on Influence Maximization}
+%\title{Influence Maximization while Exploring a Network}
+%\author{Bhargav Samineni}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Prior Work}
+\customcite{eshghi2019efficient}
+\begin{problem}[PV-IM]
+    Suppose there exists some underlying directed graph $G = \lrp{V, E}$ where $\abs{V} = n, \abs{E} = m$. If we are given
+    \begin{itemize}[label=--]
+        \itemsep0em 
+        \item a visible induced subgraph of this network $G_v = \lrp{V_v, E_v}$ where $V_v \sse V$
+        %and $E_v = \lrc{e = \lrp{a, b} \in E \colon a, b \in V_v}$
+        \item the structure of the unobserved part of the network is one of $M$ different realizations $G_1, \ldots, G_M$
+        each with respective probability $q_i$ such that $\sum_{i=1}^{M} q_i = 1$ 
+        \item a diffusion model (either Independent Cascade or Weighted Cascade) with edge weight function $p \colon E \rightarrow \lrb{0, 1}$ and positive integer $k$
+    \end{itemize}  
+    find a seed set $S \sse V_v$ of size $k$ that maximizes $\infl{S}$. This is defined to be the a priori expected spread from $S$ among all 
+    realizations (i.e.\! $\infl{S} = \sum_{i=1}^{M} q_i \f[\sigma_i]{S}$ where $\f[\sigma_i]{S}$ is the expected spread of $S$ in the graph $\calG_i = G_v \cup G_i$). 
+\end{problem}
+
+The main contribution of this paper is to extend the idea of Reverse Reachable (RR) sets to this new setting by specifying 
+how many RR sets need to be generated for each network realization $\calG_i$.
+Let $\f[x_i^j]{S}$ be a binary variable 
+denoting whether the $j$th RR set for $\calG_i$ overlaps with any of the nodes in set $S$. Based on this we can define 
+\begin{equation*}
+    \f[F_i]{S} = \frac{1}{\theta_i} \sum_{j=1}^{\theta_i} \f[x_i^j]{S}
+\end{equation*}
+to be the fraction of RR sets generated on $\calG_i$ that $S$ covers. This value is an unbiased estimator of $\f[\sigma_i]{S} / n$, which gives us that 
+$\f[F]{S} = \sum_{i=1}^{M} q_i \f[F_i]{S}$ (i.e.\! the weighted average of the fraction of total RR sets that overlap with $S$) is an unbiased estimator of 
+$\f[\sigma]{S} / n$. 
+ 
+
+Let $S^{\ast}$ be an optimal seed set. Define $p^{\ast}$ to be the expected influenced fraction of nodes in the network with $S^{\ast}$ as a seed set 
+(i.e.\! $p^{\ast} = \f[\sigma]{S^{\ast}} / n$). For each graph realization $\calG_i$, define $p_i^{\ast}$ similarly (i.e.\! $p_i^{\ast} = \f[\sigma_i]{S} / n$). 
+Then $p^{\ast} = \sum_{i=1}^{M} q_i p_i^{\ast}$. 
+
+\begin{lemma}[\cite{eshghi2019efficient}, Lemma 1]
+    For $\delta_1 \in \lrp{0, 1}$ and $\varepsilon_1 > 0$, if 
+    \begin{equation}
+        \theta^{\ast} = \frac{\sum_{i=1}^{M} q_i^2 p_i^{\ast} \lrp{1 - p_i^{\ast}}}{\lrp{\sum_{i=1}^{M} q_i p_i^{\ast}}^2} \frac{\f[\log]{1 / \delta_1}}{\varepsilon_1^2}
+        = \frac{\sum_{i=1}^{M} q_i^2 p_i^{\ast} \lrp{1 - p_i^{\ast}}}{\lrp{p^{\ast}}^2} \frac{\f[\log]{1 / \delta_1}}{\varepsilon_1^2},
+        \label{eq:theta_star}
+    \end{equation}
+    then for $\theta \geq \theta^{\ast}$, $n\f[F]{S^{\ast}} \geq \lrp{1 - \varepsilon_1}\f[\sigma]{S^{\ast}}$ with probability at least $1 - \delta_1$, where each realization $\calG_i$ is sampled 
+    \begin{equation}
+        \theta_i^{\ast} = \theta^{\ast} \frac{q_i \sqrt{p_i^{\ast} \lrp{1 - p_i^{\ast}} }}{\sum_{j=1}^{M} q_j \sqrt{p_j^{\ast} \lrp{1 - p_j^{\ast}} }}
+        \label{eq:theta_star_i}
+    \end{equation}
+    times for RR sets. 
+    \label{lem:theta_star}
+\end{lemma}
+
+\cref{lem:theta_star} implies that if a set $S$ is constructed greedily from nodes covering these $\theta^{\ast}$ RR sets, then 
+\begin{equation*}
+    n\f[F]{S} \geq \lrp{1 - \frac{1}{e}} n \f[F]{S^{\ast}} \geq \lrp{1 - \frac{1}{e}} \lrp{1 - \varepsilon_1} \f[\sigma]{S^*} = \lrp{1 - \frac{1}{e} - \varepsilon_1 \lrp{1 - \frac{1}{e}}} \f[\sigma]{S^{\ast}}
+\end{equation*}
+with probability $1 - \delta_1$. Intuitively, since $n \f[F]{S}$ is an indicator of $\f[\sigma]{S}$, this implies that $S$ is likely to be large. 
+However, the greedy algorithm can still construct a suboptimal seed set with some probability. 
+To bound this possibility, we may need to generate more RR sets to ensure that the estimators of these suboptimal seed sets are 
+close to their expected values. 
+
+\begin{lemma}
+    For $\delta_2 \in \lrp{0, 1}$, $\varepsilon > \varepsilon_1 \lrp{1 - \frac{1}{e}} > 0$, if \cref{lem:theta_star}
+    holds and 
+    \begin{equation}
+        \theta^\prime = \frac{2 \f[\log]{\frac{\binom{n}{k}}{\delta_2}} \lrb{\lrp{1 - \varepsilon_1}\lrp{1 - \frac{1}{e}} - \frac{2}{3}\varepsilon}}{\lrp{\varepsilon - \varepsilon_1 \lrp{1 - \frac{1}{e}}}^2 p^*},
+        \label{eq:theta_prime_i}
+    \end{equation}
+    then for $\theta \geq \theta^\prime$, $\f[\sigma]{S} \geq \lrp{1 - \frac{1}{e} - \varepsilon} \f[\sigma]{S^*}$
+    with probability at least $1 - \delta_2$, where each realization $\calG_i$ is sampled $\theta_i^\prime = q_i \theta^\prime$ for RR sets. 
+    \label{lem:theta_prime}
+\end{lemma}
+
+\cref{lem:theta_star,lem:theta_prime} then give the following main result. 
+
+\begin{theorem}
+    For $\varepsilon > \varepsilon_1 \lrp{1 - \frac{1}{e}} > 0$, $\delta_1 , \delta_2 \in \lrp{0, 1}$ and $\delta = \delta_1 + \delta_2$, 
+    if $\calG_i$ is sampled $\theta_i = \max \lrc{\theta_i^{\ast}, \theta_i^\prime}$ times for RR sets for all $i$, 
+    then the greedy algorithm returns a $\lrp{1 - \frac{1}{e} - \varepsilon}$ approximation with probability at least $1 - \delta$.     
+    \label{thm:}
+\end{theorem}
+
+\section{Extensions}
+
+The actual construction of the RR sets do not necessarily depend on the diffusion model used. As long as there is a way to 
+create the RR sets, then the same bounds on the number of RR sets needed for each $\calG_i$ and the general algorithm of \cite{eshghi2019efficient} can still be applied. 
+\cite{tang2015influence} show that the triggering model still allows for the generation of RR sets. In general, if the diffusion model used 
+does not admit a submodular influence spread function, then it is impossible to generate RR sets under that model. 
+
+In the original IMM paper \cite{tang2015influence}, they provide a lower bound on the size of $\f[\sigma]{S^*}$ as that value is used 
+in constructing the bounds on the number of RR sets needed. This paper does not provide that analysis. 
+
+\begin{comment}
+The main contribution of this paper is to extend the idea of Reverse Reachable (RR) sets to this new setting. If we denote 
+$\calG_i = G_v \cup G_i$ for an unobserved realization $i$ and $S$ a seed set, then we can define some unbiased estimator of $\infl{S}$ based on the weighted average of the proportion 
+of random RR sets generated for each $\calG_i$ that overlap with $S$. We want this estimator to be close enough to $\infl{S}$ so that a simple greedy algorithm that iteratively adds nodes 
+chooses a seed set within an acceptable range with high probability. This can be accomplished in two steps 
+\begin{enumerate}
+    \item Choosing enough RR sets such that for an optimal seed set $S^{\ast}$, the estimator of $\infl{S^*}$ is close with high probability
+    \item Choosing more RR sets (if needed) to ensure that the influence estimators of suboptimal seed sets will also be close to their expected vale. 
+\end{enumerate}
+
+The paper gives lower bounds on the number of RR sets needed to be chosen for each graph realization $\calG_i$ such that the greedy 
+algorithm gives a $\lrp{1 - \frac{1}{e} - \varepsilon}$ approximation with high probability.  
+\end{comment}
+
+\newpage
+\printbibliography
+
+\end{document}

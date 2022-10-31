@@ -2,7 +2,7 @@
 \usepackage[biblatex]{preamble}
 \addbibresource{refs.bib}
 
-\newcommand{\infmax}{\hyperref[prob:infmax]{\color{black}\textsf{InfMax}}}
+\newcommand{\infmax}{\hyperref[prob:infmax]{\textsf{InfMax}}}
 \newcommand{\infl}[1]{\ensuremath{\func{\sigma}{#1}}}
 \newcommand{\inneigh}[1]{\ensuremath{\func{\Gamma}{#1}}}
 \newcommand{\ltmodel}[1][LT]{\hyperref[def:linear_threshold]{\textsf{#1}}}
@@ -23,7 +23,10 @@
     
     \input{sections/intro}
     \input{sections/approx_algs}
-    
+    \newpage
+    \input{sections/exploring}
+    \newpage 
+    \input{sections/streaming.tex}
     %\section{Graph Exploration}
     %\NOTE{The graph exploration problem may relate to slowly uncovering a graph with a budget $B$.}
 
